@@ -1,0 +1,16 @@
+.loginPage {
+  position: relative;
+
+  .snackbarItem {
+    position: absolute;
+    top: 125%;
+    width: 100%;
+    right: 0;
+  }
+}
+
+@media (max-width: 600px) {
+  .loginPage .snackbarItem {
+    left: 0;
+  }
+}
