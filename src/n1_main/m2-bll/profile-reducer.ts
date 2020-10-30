@@ -26,6 +26,10 @@ const profileReducer = (state: InitialStateType = InitialState, action: ActionTy
         }
     }
 }
+
+
+
+
 export const setProfileDataAC = (userData: ResponseLoginType) => (
     {type: "SET-PROFILE-DATA", userData} as const
 )
@@ -38,7 +42,6 @@ export const authMeTC = () => async (dispatch: Dispatch) => {
         dispatch(isInitializedAC(true))
         const res = await authAPI.authMe()
         dispatch(setProfileDataAC(res.data))
-
         dispatch(loginAC(true))
     } catch (e) {
         console.log(e.response.data.error) // message => user not authorized

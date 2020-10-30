@@ -5,6 +5,7 @@ import loginReducer, {loginAC, setStatusProgressAC} from "./login-reducer";
 import registrationReducer, {requestStatus, setErrorRegistration, setIsLoggedIn} from "./registration-reducer";
 import changePasswordReducer, {isCorrectPassword, setPasswordAC} from "./changePassword-reducer";
 import forgotPasswordReducer, {forgotPasswordAC} from "./forgotPassword-reducer";
+import {cardsPackReducer, setPacksCardsAC} from "./cardsPack-reducer";
 
 const rootReducer = combineReducers({
     profile: profileReducer,
@@ -12,6 +13,7 @@ const rootReducer = combineReducers({
     registration: registrationReducer,
     changePassword: changePasswordReducer,
     forgotPassword: forgotPasswordReducer,
+    cardsPack: cardsPackReducer,
 })
 
 export const store = createStore(rootReducer, applyMiddleware(thunk))
@@ -28,7 +30,8 @@ export type ActionTypes = |
     ReturnType<typeof setStatusProgressAC> |
     ReturnType<typeof forgotPasswordAC> |
     ReturnType<typeof setPasswordAC> |
-    ReturnType<typeof isCorrectPassword>
+    ReturnType<typeof isCorrectPassword> |
+    ReturnType<typeof setPacksCardsAC>
 
 
 // @ts-ignore

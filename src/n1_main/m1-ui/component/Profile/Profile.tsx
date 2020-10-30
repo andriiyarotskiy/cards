@@ -20,6 +20,7 @@ export const Profile = () => {
         dispatch(authMeTC())
     }, [dispatch])
 
+
     const logOutClick = () => {
         dispatch(logOutTC())
     }
