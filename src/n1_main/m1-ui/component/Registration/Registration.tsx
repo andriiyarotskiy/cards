@@ -61,7 +61,7 @@ const Registration = ({classes}: any) => {
     }
     const isErrorEmail = !!(formik.touched.email && formik.errors.email)
     const isErrorPass = !!(formik.touched.password && formik.errors.password)
-    const isErrorRepeatPass = !!(formik.touched.repeatPassword && formik.errors.repeatPassword)
+    const isErrorRepeatPass = !!(isErrorPass || formik.touched.repeatPassword && formik.errors.repeatPassword)
     // Input Error
     // Redirect to Login after successful registration
     if (isLoggedIn) {
@@ -136,7 +136,7 @@ const Registration = ({classes}: any) => {
                             style={{color: "red", position: "absolute"}}>{formik.errors.repeatPassword}</span>}
                         {...formik.getFieldProps('repeatPassword')}
                     />
-                    {isErrorRepeatPass && isErrorPass
+                    {isErrorRepeatPass
                         ? <div className={style.iconError}>
                             <ErrorIcon color="secondary"/>
                         </div>
