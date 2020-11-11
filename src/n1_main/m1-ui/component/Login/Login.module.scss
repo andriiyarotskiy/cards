@@ -1,9 +1,17 @@
+.circularProgress {
+  width: 40px;
+  height: 40px;
+  margin: 8px;
+}
+
+
 .loginPage {
   position: relative;
+  width: 100%;
 
   .snackbarItem {
     position: absolute;
-    top: 125%;
+    top: 430px; // or 125%
     width: 100%;
     right: 0;
   }
@@ -12,5 +20,15 @@
 @media (max-width: 600px) {
   .loginPage .snackbarItem {
     left: 0;
+  }
+}
+
+.customInput {
+  position: relative;
+
+  .iconError {
+    position: absolute;
+    top: 30px;
+    right: 10px;
   }
 }

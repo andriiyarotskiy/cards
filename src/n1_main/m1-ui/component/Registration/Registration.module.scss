@@ -1,3 +1,9 @@
+.circularProgress {
+  width: 40px;
+  height: 40px;
+  margin: 8px;
+}
+
 .snackBarContainer {
   position: relative;
 
@@ -7,11 +13,11 @@
     width: 100%;
     right: 0;
   }
-}
 
-@media (max-width: 600px) {
-  .snackBarContainer .snackbarItem {
-    left: 0;
+  @media (max-width: 600px) {
+    .snackbarItem {
+      left: 0;
+    }
   }
 }
 

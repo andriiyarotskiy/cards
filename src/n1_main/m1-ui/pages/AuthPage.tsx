@@ -1,9 +1,8 @@
 import {makeStyles} from "@material-ui/core/styles";
 import {useSelector} from "react-redux";
 import {AppRootStateType} from "../../m2-bll/store";
-import {RequestStatusType} from "../../m2-bll/login-reducer";
 import {Redirect, Route, Switch} from "react-router-dom";
-import {CssBaseline, Grid, LinearProgress, Paper} from "@material-ui/core";
+import {CssBaseline, Grid, Paper} from "@material-ui/core";
 import React from "react";
 import Login from "../component/Login/Login";
 import Registration from "../component/Registration/Registration";
@@ -13,7 +12,6 @@ import ForgotPassword from "../component/ForgotPassword/ForgotPassword";
 const AuthPage = () => {
     const classes = useStyles();
     const isAuth = useSelector<AppRootStateType, boolean>(state => state.login.isAuth)
-    const progress = useSelector<AppRootStateType, RequestStatusType>(state => state.login.progress)
 
     if (isAuth) {
         return <Redirect to={"/"}/>
@@ -21,14 +19,13 @@ const AuthPage = () => {
 
     return (
         <>
-            {progress === "loading" ? <LinearProgress/> : null}
             <Grid container component="main" className={classes.root}>
                 <CssBaseline/>
                 <Grid item xs={false} sm={4} md={7} className={classes.image}/>
                 <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
                     <div className={classes.paper}>
                         <Switch>
-                            <Route exact path='/authPage/login' render={() => <Login progress={progress} classes={classes}/>}/>
+                            <Route exact path='/authPage/login' render={() => <Login classes={classes}/>}/>
                             <Route path='/authPage/registration' render={() => <Registration classes={classes}/>}/>
                             <Route path='/authPage/forgotPassword' render={() => <ForgotPassword classes={classes}/>}/>
                         </Switch>

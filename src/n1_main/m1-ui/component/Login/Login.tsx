@@ -1,12 +1,23 @@
-import React from "react";
+import React, {KeyboardEvent} from "react";
 import {NavLink} from "react-router-dom";
 import {useFormik} from "formik";
-import {useDispatch} from "react-redux";
-import {Avatar, Button, Checkbox, FormControlLabel, Grid, Snackbar, TextField, Typography} from "@material-ui/core";
-import {LoginTC, setStatusProgressAC} from "../../../m2-bll/login-reducer";
+import {useDispatch, useSelector} from "react-redux";
+import {
+    Avatar,
+    Button,
+    Checkbox,
+    CircularProgress,
+    FormControlLabel,
+    Grid,
+    TextField,
+    Typography
+} from "@material-ui/core";
+import {InitialStateLoginType, LoginTC, setStatusProgressAC} from "../../../m2-bll/login-reducer";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import style from "./Login.module.scss"
-import {Alert} from "@material-ui/lab";
+import CustomSnackbar from "../../common/CustomSnackbar/CustomSnackbar";
+import ErrorIcon from "@material-ui/icons/Error";
+import {AppRootStateType} from "../../../m2-bll/store";
 
 
 type FormikErrorType = {
@@ -17,12 +28,14 @@ type FormikErrorType = {
 
 
 type LoginFormType = {
-    progress: string
     classes: any
 }
 
 
-const Login = ({progress, classes}: LoginFormType) => {
+const Login = ({classes}: LoginFormType) => {
+    const {progress, error} = useSelector<AppRootStateType, InitialStateLoginType>(state => state.login)
+
+
     const dispatch = useDispatch();
     const formik = useFormik({
         initialValues: {
@@ -49,70 +62,81 @@ const Login = ({progress, classes}: LoginFormType) => {
         }
     })
 
+    // Input settings
+    const onKeyPressHandler = (e: KeyboardEvent<HTMLInputElement>) => {
+        formik.setTouched({}, false)
+    }
+    const isErrorEmail = !!(formik.touched.email && formik.errors.email)
+    const isErrorPass = !!(formik.touched.password && formik.errors.password)
+    // Input settings
+
     // snackbar
-    const handleClose = (event?: React.SyntheticEvent, reason?: string) => {
-        if (reason === 'clickaway') {
-            return;
-        }
-        dispatch(setStatusProgressAC("idle"))
-    };
     const isOpen = progress === "failed"
-
     // snackbar
-
+    // btn disable
     const buttonDisabled = () => {
         if (progress === "loading" || !formik.values.email || !formik.values.password) return true
     }
     return (
         <>
-
-            <Avatar className={classes.avatar}>
-                <LockOutlinedIcon/>
-            </Avatar>
+            {progress === "loading"
+                ? <div className={style.circularProgress}><CircularProgress/></div>
+                : <Avatar className={classes.avatar}>
+                    <LockOutlinedIcon/>
+                </Avatar>
+            }
             <Typography component="h1" variant="h5">
                 Sign in
             </Typography>
 
             <div className={style.loginPage}>
-
-
                 <form onSubmit={formik.handleSubmit} className={classes.form}>
+                    <div className={style.customInput}>
+                        <TextField
+                            variant="outlined"
+                            margin="normal"
+                            required fullWidth
+                            id="email" name="email" label="Email Address"
+                            onKeyPress={onKeyPressHandler}
+                            error={isErrorEmail}
+                            autoComplete="email" autoFocus
+                            helperText={<span style={{color: "red", position: "absolute"}}>{formik.errors.email}</span>}
+                            {...formik.getFieldProps("email")}
+                        />
+                        {isErrorEmail
+                            ? <div className={style.iconError}>
+                                <ErrorIcon color="secondary"/>
+                            </div>
+                            : null}
+                    </div>
+                    <div className={style.customInput}>
+                        <div className={style.customInput}>
+                            <TextField
+                                variant="outlined"
+                                margin="normal"
+                                required fullWidth
+                                name="password" label="Password" type="password" id="password"
+                                autoComplete="current-password"
+                                {...formik.getFieldProps("password")}
+                                error={isErrorPass}
+                                helperText={<span
+                                    style={{color: "red", position: "absolute"}}>{formik.errors.password}</span>}
+                            />
+                            {isErrorPass
+                                ? <div className={style.iconError}>
+                                    <ErrorIcon color="secondary"/>
+                                </div>
+                                : null}
+                        </div>
+                    </div>
 
-                    <TextField
-                        variant="outlined"
-                        margin="normal"
-                        required
-                        fullWidth
-                        id="email"
-                        label="Email Address"
-                        name="email"
-                        autoComplete="email"
-                        autoFocus
-                        {...formik.getFieldProps("email")}
-                        helperText={<span style={{color: "red", position: "absolute"}}>{formik.errors.email}</span>}
-                    />
-                    {/*{formik.errors.email ? <div style={{color: "red"}}>{formik.errors.email}</div> : null}*/}
-                    <TextField
-                        variant="outlined"
-                        margin="normal"
-                        required
-                        fullWidth
-                        name="password"
-                        label="Password"
-                        type="password"
-                        id="password"
-                        autoComplete="current-password"
-                        {...formik.getFieldProps("password")}
-                        helperText={<span style={{color: "red", position: "absolute"}}>{formik.errors.password}</span>}
-                    />
                     <FormControlLabel
                         control={<Checkbox {...formik.getFieldProps("rememberMe")} color="primary"/>}
                         label="Remember me"
                     />
                     <Button
                         disabled={buttonDisabled()}
-                        type="submit"
-                        fullWidth
+                        type="submit" fullWidth
                         variant="contained"
                         color="primary"
                         className={classes.submit}
@@ -129,14 +153,11 @@ const Login = ({progress, classes}: LoginFormType) => {
                             </NavLink>
                         </Grid>
                     </Grid>
-                    <Snackbar
-                        className={style.snackbarItem}
-                        open={isOpen}
-                        autoHideDuration={4000} onClose={handleClose}>
-                        <Alert onClose={handleClose} severity="error">
-                            This is a Error message!
-                        </Alert>
-                    </Snackbar>
+                    <CustomSnackbar error={error}
+                                    sneckbarStyle={style.snackbarItem}
+                                    dispatchCallback={() => setStatusProgressAC("idle")}
+                                    open={isOpen}
+                                    severity={"error"}/>
                 </form>
             </div>
         </>

@@ -5,10 +5,10 @@ import {InitialStateType, registrationTC, setErrorRegistration} from "../../../m
 import {useDispatch, useSelector} from "react-redux";
 import {AppRootStateType} from "../../../m2-bll/store";
 import {Redirect} from "react-router-dom";
-import {Alert} from "@material-ui/lab";
-import {Avatar, Button, LinearProgress, Snackbar, TextField, Typography} from "@material-ui/core";
+import {Avatar, Button, CircularProgress, TextField, Typography} from "@material-ui/core";
 import ErrorIcon from '@material-ui/icons/Error';
 import style from "./Registration.module.scss"
+import CustomSnackbar from "../../common/CustomSnackbar/CustomSnackbar";
 
 
 const validate = (value: RegistrationDataType) => {
@@ -47,12 +47,6 @@ const Registration = ({classes}: any) => {
         },
     });
     // SnackBarr Error
-    const handleClose = (event?: React.SyntheticEvent, reason?: string) => {
-        if (reason === 'clickaway') {
-            return
-        }
-        dispatch(setErrorRegistration(null));
-    }
     const isOpen = error !== null;
     // Input Error
 
@@ -61,7 +55,7 @@ const Registration = ({classes}: any) => {
     }
     const isErrorEmail = !!(formik.touched.email && formik.errors.email)
     const isErrorPass = !!(formik.touched.password && formik.errors.password)
-    const isErrorRepeatPass = !!(isErrorPass || formik.touched.repeatPassword && formik.errors.repeatPassword)
+    const isErrorRepeatPass = !!((isErrorPass && formik.touched.repeatPassword) || formik.errors.repeatPassword)
     // Input Error
     // Redirect to Login after successful registration
     if (isLoggedIn) {
@@ -70,11 +64,14 @@ const Registration = ({classes}: any) => {
 
     return (
         <>
-            {loaderStatus === "loading" && <LinearProgress/>}
+            {loaderStatus === "loading"
+                ? <div className={style.circularProgress}><CircularProgress/></div>
+                : <Avatar className={classes.avatar}>
 
-            <Avatar className={classes.avatar}>
-                {/*ICON*/}
-            </Avatar>
+                </Avatar>
+            }
+
+
 
             <Typography component="h1" variant="h5">
                 Sign up
@@ -101,13 +98,9 @@ const Registration = ({classes}: any) => {
                     <TextField
                         variant="outlined"
                         margin="normal"
-                        required
-                        fullWidth
-                        name="password"
-                        label="Password"
-                        type="password"
+                        required fullWidth
+                        name="password" label="Password" type="password" id="password"
                         onKeyPress={onKeyPressHandler}
-                        id="password"
                         autoComplete="current-password"
                         error={isErrorPass}
                         {...formik.getFieldProps('password')}
@@ -153,13 +146,13 @@ const Registration = ({classes}: any) => {
                     Sign Up
                 </Button>
                 <div className={style.snackBarContainer}>
-                    <Snackbar
-                        className={style.snackbarItem}
-                        open={isOpen} autoHideDuration={5000} onClose={handleClose}>
-                        <Alert variant="filled" severity="error">
-                            {error}
-                        </Alert>
-                    </Snackbar>
+                    <CustomSnackbar
+                        sneckbarStyle={style.snackbarItem}
+                        error={error}
+                        dispatchCallback={() => setErrorRegistration(null)}
+                        open={isOpen}
+                        severity={"error"}
+                    />
                 </div>
             </form>
         </>

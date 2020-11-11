@@ -8,8 +8,11 @@ const loginReducer = (state: InitialStateLoginType = InitialStateLogin, action: 
         case "login/SET-IS-LOGGED-IN": {
             return {...state, isAuth: action.value}
         }
-        case "SET-STATUS-PROGRESS": {
+        case "login/SET-STATUS-PROGRESS": {
             return {...state, progress: action.progress}
+        }
+        case "login/SET-ERROR-MESSAGE": {
+            return {...state, error: action.error}
         }
         default: {
             return state;
@@ -22,7 +25,10 @@ export const loginAC = (value: boolean) => (
     {type: "login/SET-IS-LOGGED-IN", value} as const
 )
 export const setStatusProgressAC = (progress: RequestStatusType) => (
-    {type: "SET-STATUS-PROGRESS", progress} as const
+    {type: "login/SET-STATUS-PROGRESS", progress} as const
+)
+export const setErrorMessageAC = (error: RequestStatusType) => (
+    {type: "login/SET-ERROR-MESSAGE", error} as const
 )
 
 
@@ -37,8 +43,7 @@ export const LoginTC = (data: LoginParamsType) => (dispatch: Dispatch<ActionType
 
         })
         .catch(e => {
-            const error = e.response ? e.response.data.error : (e.message + " ,more details in the console")
-            console.log("Error", {...e})
+            dispatch(setErrorMessageAC(e.response.data.error))
             dispatch(setStatusProgressAC("failed"))
         })
 }
@@ -48,6 +53,7 @@ export const LoginTC = (data: LoginParamsType) => (dispatch: Dispatch<ActionType
 const InitialStateLogin = {
     isAuth: false,
     progress: "idle" as RequestStatusType,
+    error: null as string | null
 }
 
 export type InitialStateLoginType = typeof InitialStateLogin;
