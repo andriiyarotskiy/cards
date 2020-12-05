@@ -18,8 +18,8 @@ const ForgotPassword = ({classes}: any) => {
     const formik = useFormik({
         initialValues: {
             email: "",
-            from: "test-front-admin <artem_ermakov_1999@mail.ru>",
-            message: `<div>password recovery link: <a href='http://localhost:3000/#/passwordChange/$token$'>TAP TAP TAP</a></div>`
+            from: "test-front-admin <wnbroz20@meta.ua>",
+            message: `<div>password recovery link: <a href='https://andriiyarotskiy.github.io/cards/#/passwordChange/$token$'>TAP TAP TAP</a></div>`
         },
         validate: values => {
             const errors: FormikErrorType = {};
